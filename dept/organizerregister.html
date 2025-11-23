@@ -29,74 +29,42 @@ button {
 
 <h1>Organizer Registration</h1>
 
-<input type="email" id="email" placeholder="Enter Email"><br>
+<input type="text" id="username" placeholder="Enter Username"><br>
 <input type="password" id="password" placeholder="Enter Password"><br>
 
-<a href="organizerlogin.html">
-    <button style="background:yellow;">Register</button>
-</a>
+<button style="background:yellow;" onclick="registerOrganizer()">Register</button>
 
 <br><br>
-
 <a href="organizerlogin.html">
-    <button style="background:yellow;">Already have account? Login</button>
+    <button style="background:white;">Already have account? Login</button>
 </a>
 
 <script>
-window.onload = function () {
-
-const BIN_ID = "6921e288ae596e708f69e82b";
-const API_KEY = "$2a$10$F8LDQjZ9qzvGczlmC5/J2ekZLpGVvQnj0nSgt02RoA6n6HsQ3pZEK";
-
-/* -------------------------------
-        REGISTER ORGANIZER
--------------------------------- */
-window.registerOrganizer = async function () {
-
-    let email = document.getElementById("email").value.trim();
+function registerOrganizer() {
+    let username = document.getElementById("username").value.trim();
     let pass = document.getElementById("password").value.trim();
 
-    if (!email || !pass) {
+    if (!username || !pass) {
         alert("Please fill all fields!");
         return;
     }
 
-    // Fetch existing data
-    let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
+    let organizers = JSON.parse(localStorage.getItem("organizers")) || [];
 
-    let data = await res.json();
-    let organizers = data.record.organizers || [];
-
-    // Check duplicate
-    if (organizers.some(o => o.email.toLowerCase() === email.toLowerCase())) {
-        alert("Organizer already exists!");
+    // Check if username already exists
+    if (organizers.some(o => o.username.toLowerCase() === username.toLowerCase())) {
+        alert("Username already exists!");
         return;
     }
 
-    // Push new organizer
-    organizers.push({ email, password: pass });
-
-    // PUT updated data BACK to the bin
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": API_KEY
-        },
-        body: JSON.stringify({
-            organizers: organizers     // CORRECT JSON FORMAT
-        })
-    });
+    // Save new organizer
+    organizers.push({ username, password: pass });
+    localStorage.setItem("organizers", JSON.stringify(organizers));
 
     alert("Registration successful!");
     window.location.href = "organizerlogin.html";
-};
-
-}; // window.onload end
+}
 </script>
 
 </body>
 </html>
-
