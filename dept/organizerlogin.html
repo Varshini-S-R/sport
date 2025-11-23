@@ -33,8 +33,7 @@ button {
 
 <h1>Organizer Login</h1>
 
-<input type="text" id="username" placeholder="Enter Organizer Username"><br>
-
+<input type="text" id="username" placeholder="Enter Username"><br>
 <button onclick="sendOTP()">Login</button>
 
 <div id="otpBox">
@@ -48,9 +47,9 @@ button {
 <script>
 let generatedOTP = "";
 
-/* ----------------------------------
-      SEND OTP FUNCTION
----------------------------------- */
+/* ----------------------------
+      SEND OTP
+---------------------------- */
 function sendOTP() {
     let username = document.getElementById("username").value.trim();
 
@@ -59,7 +58,7 @@ function sendOTP() {
         return;
     }
 
-    // CORRECTED: Load organizers (not clubs)
+    // Load organizers
     let organizers = JSON.parse(localStorage.getItem("organizers")) || [];
 
     let found = organizers.find(o =>
@@ -78,9 +77,9 @@ function sendOTP() {
     document.getElementById("otpBox").style.display = "block";
 }
 
-/* ----------------------------------
-      VERIFY OTP FUNCTION
----------------------------------- */
+/* ----------------------------
+      VERIFY OTP
+---------------------------- */
 function verifyOTP() {
     let entered = document.getElementById("otpInput").value.trim();
     let username = document.getElementById("username").value.trim();
