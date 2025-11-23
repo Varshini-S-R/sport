@@ -30,34 +30,45 @@ button { padding:12px 25px; font-size:18px; margin:10px; cursor:pointer; }
 <script>
 let generatedOTP = "";
 
+/* ----------------------------
+      SEND OTP
+------------------------------ */
 function sendOTP() {
     let username = document.getElementById("username").value.trim();
 
     if (!username) {
-        alert("Please enter your  username!");
+        alert("Please enter your username!");
         return;
     }
 
-    let organizer = JSON.parse(localStorage.getItem("organizer")) || [];
-    let found = organizer.find(c => c.username.toLowerCase() === username.toLowerCase());
+    // FIXED → load organizers, not clubs
+    let organizers = JSON.parse(localStorage.getItem("organizers")) || [];
+
+    let found = organizers.find(o =>
+        o.username.toLowerCase() === username.toLowerCase()
+    );
 
     if (!found) {
         alert("This organizer is not registered!");
         return;
     }
 
-    // generate demo OTP
+    // Generate demo OTP
     generatedOTP = Math.floor(100000 + Math.random()*900000).toString();
     alert("Your OTP is: " + generatedOTP);
 
     document.getElementById("otpBox").style.display = "block";
 }
 
+/* ----------------------------
+      VERIFY OTP
+------------------------------ */
 function verifyOTP() {
-    let entered = document.getElementById("otpInput").value;
+    let entered = document.getElementById("otpInput").value.trim();
+    let username = document.getElementById("username").value.trim();
 
     if (entered === generatedOTP) {
-        localStorage.setItem("loggedClub", document.getElementById("username").value.trim());
+        localStorage.setItem("loggedOrganizer", username);
         alert("Login successful!");
         window.location.href = "organizerdashboard.html";
     } else {
@@ -68,5 +79,3 @@ function verifyOTP() {
 
 </body>
 </html>
-
-
