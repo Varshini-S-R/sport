@@ -3,6 +3,7 @@
 <head>
 <title>Organizer Login</title>
 <meta charset="UTF-8">
+
 <style>
 body {
     text-align:center;
@@ -25,6 +26,14 @@ button {
 }
 .login-btn { background:white; }
 .register-btn { background:yellow; margin-top:10px; }
+
+#otpBox {
+    display:none;
+    background:white;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
+}
 </style>
 </head>
 
@@ -32,10 +41,11 @@ button {
 
 <h1>Organizer Login</h1>
 
+<!-- LOGIN FIELDS -->
 <input type="email" id="email" placeholder="Enter Email"><br>
 <input type="password" id="password" placeholder="Enter Password"><br>
 
-<button class="login-btn" onclick="loginOrganizer()">Login</button>
+<button class="login-btn" onclick="verifyLogin()">Login</button>
 
 <br><br>
 
@@ -43,24 +53,35 @@ button {
     New Organizer? Create Account
 </button>
 
+<!-- OTP BOX -->
+<div id="otpBox">
+    <h2>Enter OTP</h2>
+    <p>Your demo OTP is <b>123456</b></p>
+    <input type="number" id="otpInput" placeholder="Enter OTP"><br>
+    <button onclick="verifyOTP()">Verify OTP</button>
+</div>
+
 <script>
 window.onload = function () {
 
 const BIN_ID = "6921e288ae596e708f69e82b";
 const API_KEY = "$2a$10$F8LDQjZ9qzvGczlmC5/J2ekZLpGVvQnj0nSgt02RoA6n6HsQ3pZEK";
 
-/* -------------------------------
-        LOGIN ORGANIZER
--------------------------------- */
-window.loginOrganizer = async function () {
+let tempLoggedEmail = "";  // temporary storage before OTP
+
+/* ----------------------------------------
+    STEP 1 — VERIFY EMAIL + PASSWORD
+---------------------------------------- */
+window.verifyLogin = async function () {
     let email = document.getElementById("email").value.trim();
     let password = document.getElementById("password").value.trim();
 
     if (!email || !password) {
-        alert("Please fill all fields!");
+        alert("Please enter both Email and Password!");
         return;
     }
 
+    // Get data from JSONBin
     let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
         headers: { "X-Master-Key": API_KEY }
     });
@@ -68,21 +89,42 @@ window.loginOrganizer = async function () {
     let data = await res.json();
     let organizers = data.record.organizers || [];
 
-    let found = organizers.find(o =>
+    let user = organizers.find(o =>
         o.email.toLowerCase() === email.toLowerCase() &&
         o.password === password
     );
 
-    if (!found) {
-        alert("Invalid username or password!");
+    if (!user) {
+        alert("Invalid Email or Password!");
         return;
     }
 
-    localStorage.setItem("loggedOrganizer", found.email);
+    // Store email temporarily until OTP is verified
+    tempLoggedEmail = user.email;
+
+    // Show OTP box
+    document.getElementById("otpBox").style.display = "block";
+};
+
+/* ----------------------------------------
+    STEP 2 — VERIFY OTP
+---------------------------------------- */
+window.verifyOTP = function () {
+    let otp = document.getElementById("otpInput").value.trim();
+
+    if (otp !== "123456") {
+        alert("Incorrect OTP!");
+        return;
+    }
+
+    // Save final login
+    localStorage.setItem("loggedOrganizer", tempLoggedEmail);
+
+    alert("Login Successful!");
     window.location.href = "organizerdashboard.html";
 };
 
-}; // end window.onload
+};
 </script>
 
 </body>
