@@ -42,22 +42,24 @@ button {
 <h1>Organizer Login</h1>
 
 <!-- LOGIN FIELDS -->
-<input type="email" id="email" placeholder="Enter Email"><br>
-<input type="password" id="password" placeholder="Enter Password"><br>
+<div id="loginBox">
+    <input type="email" id="email" placeholder="Enter Email"><br>
+    <input type="password" id="password" placeholder="Enter Password"><br>
 
-<button class="login-btn" onclick="verifyLogin()">Login</button>
+    <button class="login-btn" onclick="verifyLogin()">Login</button>
 
-<br><br>
+    <br><br>
 
-<button class="register-btn" onclick="window.location.href='organizerregister.html'">
-    New Organizer? Create Account
-</button>
+    <button class="register-btn" onclick="window.location.href='organizerregister.html'">
+        New Organizer? Create Account
+    </button>
+</div>
 
 <!-- OTP BOX -->
 <div id="otpBox">
     <h2>Enter OTP</h2>
     <p>Your demo OTP is <b>123456</b></p>
-    <input type="number" id="otpInput" placeholder="Enter OTP"><br>
+    <input type="number" id="otpInput" placeholder="Enter OTP"><br><br>
     <button onclick="verifyOTP()">Verify OTP</button>
 </div>
 
@@ -67,7 +69,7 @@ window.onload = function () {
 const BIN_ID = "6921e288ae596e708f69e82b";
 const API_KEY = "$2a$10$F8LDQjZ9qzvGczlmC5/J2ekZLpGVvQnj0nSgt02RoA6n6HsQ3pZEK";
 
-let tempLoggedEmail = "";  // temporary storage before OTP
+let tempLoggedEmail = "";  // temporary storage until OTP is verified
 
 /* ----------------------------------------
     STEP 1 — VERIFY EMAIL + PASSWORD
@@ -81,7 +83,7 @@ window.verifyLogin = async function () {
         return;
     }
 
-    // Get data from JSONBin
+    // Fetch all organizers
     let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
         headers: { "X-Master-Key": API_KEY }
     });
@@ -99,10 +101,11 @@ window.verifyLogin = async function () {
         return;
     }
 
-    // Store email temporarily until OTP is verified
+    // Store email temporarily
     tempLoggedEmail = user.email;
 
-    // Show OTP box
+    // Hide login box and show OTP box
+    document.getElementById("loginBox").style.display = "none";
     document.getElementById("otpBox").style.display = "block";
 };
 
