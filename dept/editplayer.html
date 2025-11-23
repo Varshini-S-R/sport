@@ -1,66 +1,147 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Edit Players</title>
+<title>Edit Player Information</title>
 <meta charset="UTF-8">
+
 <style>
-body { font-family:Arial; padding:20px; background-color: green;}
-button { padding:6px 12px; margin-left:10px; }
-.item { background:#f4f4f4; padding:12px; margin:8px; border-radius:8px; }
-input { padding:5px; font-size:16px; }
+body {
+    font-family: Arial;
+    background: #c2f7c2;
+    padding: 20px;
+}
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    margin: auto;
+    box-shadow: 0px 0px 10px #0003;
+}
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #555;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: green;
+    color: white;
+    border: none;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
 </style>
 </head>
+
 <body>
 
-<h1>Edit Players</h1>
+<h1 style="text-align:center;">Edit Player Details</h1>
 
-<div id="playerList"></div>
+<div class="container">
+
+    <label>Select Player</label>
+    <select id="playerSelect" onchange="loadPlayer()">
+        <option value="">-- Select Player --</option>
+    </select>
+
+    <label>Name</label>
+    <input type="text" id="name">
+
+    <label>Age</label>
+    <input type="number" id="age">
+
+    <label>Team</label>
+    <input type="text" id="team">
+
+    <label>Role</label>
+    <input type="text" id="role">
+
+    <label>Phone</label>
+    <input type="text" id="phone">
+
+    <button onclick="updatePlayer()">Save Changes</button>
+</div>
 
 <script>
-const loggedClub = localStorage.getItem("loggedClub");
-const players = JSON.parse(localStorage.getItem("players")) || [];
+const BIN_ID = "6921e288ae596e708f69e82b";
+const API_KEY = "$2a$10$F8LDQjZ9qzvGczlmC5/J2ekZLpGVvQnj0nSgt02RoA6n6HsQ3pZEK";
 
-function loadPlayers() {
-    let list = players.filter(p => p.club === loggedClub);
-    let container = document.getElementById("playerList");
-    container.innerHTML = "";
+let players = [];
 
-    list.forEach((p, index) => {
-        container.innerHTML += `
-            <div class="item">
-                <input type="text" id="name${index}" value="${p.name}" />
-                <input type="text" id="game${index}" value="${p.game}" />
-
-                <button onclick="save(${index}, '${p.name}')">Save</button>
-                <button onclick="removePlayer('${p.name}')">Delete</button>
-            </div>
-        `;
+/* --------------------------------
+   LOAD PLAYER LIST ON PAGE LOAD
+-------------------------------- */
+window.onload = async () => {
+    let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        headers: { "X-Master-Key": API_KEY }
     });
+
+    let data = await res.json();
+    players = data.record.players || [];
+
+    let select = document.getElementById("playerSelect");
+    players.forEach((p, index) => {
+        let opt = document.createElement("option");
+        opt.value = index;
+        opt.textContent = p.name;
+        select.appendChild(opt);
+    });
+};
+
+/* --------------------------------
+      LOAD PLAYER INFO
+-------------------------------- */
+function loadPlayer() {
+    let index = document.getElementById("playerSelect").value;
+    if (index === "") return;
+
+    let p = players[index];
+
+    document.getElementById("name").value = p.name;
+    document.getElementById("age").value = p.age;
+    document.getElementById("team").value = p.team;
+    document.getElementById("role").value = p.role;
+    document.getElementById("phone").value = p.phone;
 }
 
-function save(index, oldName) {
-    let newName = document.getElementById("name" + index).value;
-    let newGame = document.getElementById("game" + index).value;
+/* --------------------------------
+         UPDATE PLAYER
+-------------------------------- */
+async function updatePlayer() {
+    let index = document.getElementById("playerSelect").value;
 
-    let p = players.find(p => p.name === oldName && p.club === loggedClub);
+    if (index === "") {
+        alert("Please select a player to update!");
+        return;
+    }
 
-    p.name = newName;
-    p.game = newGame;
+    // Update selected player's info
+    players[index] = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        team: document.getElementById("team").value,
+        role: document.getElementById("role").value,
+        phone: document.getElementById("phone").value
+    };
 
-    localStorage.setItem("players", JSON.stringify(players));
-    alert("Player updated!");
-    loadPlayers();
+    // Save back to JSONBin
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": API_KEY
+        },
+        body: JSON.stringify({ players })
+    });
+
+    alert("Player details updated successfully!");
 }
-
-function removePlayer(name) {
-    let filtered = players.filter(p => !(p.name === name && p.club === loggedClub));
-
-    localStorage.setItem("players", JSON.stringify(filtered));
-    alert("Player removed!");
-    window.location.reload();
-}
-
-loadPlayers();
 </script>
 
 </body>
