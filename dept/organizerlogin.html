@@ -3,11 +3,29 @@
 <head>
 <title>Organizer Login</title>
 <meta charset="UTF-8">
+
 <style>
-body { text-align:center; font-family:Arial; margin-top:60px; background-color: green;}
-input { width:300px; padding:12px; margin:10px; font-size:18px; }
-button { padding:12px 25px; font-size:18px; margin:10px; cursor:pointer; }
-#otpBox { display:none; }
+body {
+    text-align:center;
+    font-family:Arial;
+    margin-top:60px;
+    background-color: green;
+}
+input {
+    width:300px;
+    padding:12px;
+    margin:10px;
+    font-size:18px;
+}
+button {
+    padding:12px 25px;
+    font-size:18px;
+    margin:10px;
+    cursor:pointer;
+}
+#otpBox {
+    display:none;
+}
 </style>
 </head>
 
@@ -15,12 +33,12 @@ button { padding:12px 25px; font-size:18px; margin:10px; cursor:pointer; }
 
 <h1>Organizer Login</h1>
 
-<input type="text" id="username" placeholder="Enter Organizer Username">
+<input type="text" id="username" placeholder="Enter Organizer Username"><br>
 
-<button onclick="sendOTP()">Send OTP</button>
+<button onclick="sendOTP()">Login</button>
 
 <div id="otpBox">
-    <input type="text" id="otpInput" placeholder="Enter OTP">
+    <input type="text" id="otpInput" placeholder="Enter OTP"><br>
     <button onclick="verifyOTP()">Verify OTP</button>
 </div>
 
@@ -30,9 +48,9 @@ button { padding:12px 25px; font-size:18px; margin:10px; cursor:pointer; }
 <script>
 let generatedOTP = "";
 
-/* ----------------------------
-      SEND OTP
------------------------------- */
+/* ----------------------------------
+      SEND OTP FUNCTION
+---------------------------------- */
 function sendOTP() {
     let username = document.getElementById("username").value.trim();
 
@@ -41,7 +59,7 @@ function sendOTP() {
         return;
     }
 
-    // FIXED → load organizers, not clubs
+    // CORRECTED: Load organizers (not clubs)
     let organizers = JSON.parse(localStorage.getItem("organizers")) || [];
 
     let found = organizers.find(o =>
@@ -53,16 +71,16 @@ function sendOTP() {
         return;
     }
 
-    // Generate demo OTP
-    generatedOTP = Math.floor(100000 + Math.random()*900000).toString();
+    // OTP generator
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
     alert("Your OTP is: " + generatedOTP);
 
     document.getElementById("otpBox").style.display = "block";
 }
 
-/* ----------------------------
-      VERIFY OTP
------------------------------- */
+/* ----------------------------------
+      VERIFY OTP FUNCTION
+---------------------------------- */
 function verifyOTP() {
     let entered = document.getElementById("otpInput").value.trim();
     let username = document.getElementById("username").value.trim();
