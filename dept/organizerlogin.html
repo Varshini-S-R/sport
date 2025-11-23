@@ -38,8 +38,8 @@ function sendOTP() {
         return;
     }
 
-    let clubs = JSON.parse(localStorage.getItem("clubs")) || [];
-    let found = clubs.find(c => c.username.toLowerCase() === username.toLowerCase());
+    let organizer = JSON.parse(localStorage.getItem("organizer")) || [];
+    let found = organizer.find(c => c.username.toLowerCase() === username.toLowerCase());
 
     if (!found) {
         alert("This organizer is not registered!");
@@ -68,4 +68,5 @@ function verifyOTP() {
 
 </body>
 </html>
+
 
