@@ -34,7 +34,7 @@ function sendOTP() {
     let username = document.getElementById("username").value.trim();
 
     if (!username) {
-        alert("Please enter your club username!");
+        alert("Please enter your  username!");
         return;
     }
 
@@ -42,7 +42,7 @@ function sendOTP() {
     let found = clubs.find(c => c.username.toLowerCase() === username.toLowerCase());
 
     if (!found) {
-        alert("This club is not registered!");
+        alert("This organizer is not registered!");
         return;
     }
 
@@ -68,3 +68,4 @@ function verifyOTP() {
 
 </body>
 </html>
+
