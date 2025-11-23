@@ -22,6 +22,7 @@ button {
     font-size:18px;
     margin:10px;
     cursor:pointer;
+    border-radius:8px;
 }
 #otpBox {
     display:none;
@@ -33,37 +34,24 @@ button {
 
 <h1>Organizer Login</h1>
 
-<!-- TEST BUTTON 1 -->
-<button onclick="alert('PAGE WORKING!')">TEST PAGE</button><br><br>
-
 <input type="text" id="username" placeholder="Enter Username"><br>
-
-<button id="loginBtn">Login</button>
+<button id="loginBtn" type="button">Login</button>
 
 <div id="otpBox">
     <input type="text" id="otpInput" placeholder="Enter OTP"><br>
-    <button id="verifyBtn">Verify OTP</button>
+    <button id="verifyBtn" type="button">Verify OTP</button>
 </div>
 
 <br><br>
-
-<a href="organizerregister.html"><button>New organizer?</button></a>
+<a href="organizerregister.html"><button type="button">New organizer?</button></a>
 
 <script>
-// TEST 2: CONFIRM SCRIPT RUNNING
-alert("SCRIPT LOADED!");
-
 let generatedOTP = "";
 
-// ADD EVENT LISTENER INSTEAD OF onclick (more reliable)
 document.getElementById("loginBtn").addEventListener("click", sendOTP);
 document.getElementById("verifyBtn").addEventListener("click", verifyOTP);
 
-alert("EVENT LISTENERS ATTACHED!");
-
 function sendOTP() {
-    alert("sendOTP() CALLED!");
-
     let username = document.getElementById("username").value.trim();
 
     if (!username) {
@@ -72,28 +60,29 @@ function sendOTP() {
     }
 
     let organizers = JSON.parse(localStorage.getItem("organizers")) || [];
-    alert("Loaded organizers: " + JSON.stringify(organizers));
 
     let found = organizers.find(o =>
         o.username.toLowerCase() === username.toLowerCase()
     );
 
     if (!found) {
-        alert("Organizer NOT found!");
+        alert("This organizer is not registered!");
         return;
     }
 
+    // Generate demo OTP
     generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-    alert("OTP Sent: " + generatedOTP);
+    alert("Your OTP is: " + generatedOTP);
 
     document.getElementById("otpBox").style.display = "block";
 }
 
 function verifyOTP() {
-    alert("verifyOTP() CALLED!");
-
     let entered = document.getElementById("otpInput").value.trim();
+    let username = document.getElementById("username").value.trim();
+
     if (entered === generatedOTP) {
+        localStorage.setItem("loggedOrganizer", username);
         alert("Login successful!");
         window.location.href = "organizerdashboard.html";
     } else {
