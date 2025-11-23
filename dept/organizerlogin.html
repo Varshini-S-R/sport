@@ -24,9 +24,6 @@ button {
     cursor:pointer;
     border-radius:8px;
 }
-#otpBox {
-    display:none;
-}
 </style>
 </head>
 
@@ -37,21 +34,15 @@ button {
 <input type="text" id="username" placeholder="Enter Username"><br>
 <button id="loginBtn" type="button">Login</button>
 
-<div id="otpBox">
-    <input type="text" id="otpInput" placeholder="Enter OTP"><br>
-    <button id="verifyBtn" type="button">Verify OTP</button>
-</div>
-
 <br><br>
-<a href="organizerregister.html"><button type="button">New organizer?</button></a>
+<a href="organizerregister.html">
+    <button type="button">New organizer?</button>
+</a>
 
 <script>
-let generatedOTP = "";
+document.getElementById("loginBtn").addEventListener("click", loginOrganizer);
 
-document.getElementById("loginBtn").addEventListener("click", sendOTP);
-document.getElementById("verifyBtn").addEventListener("click", verifyOTP);
-
-function sendOTP() {
+function loginOrganizer() {
     let username = document.getElementById("username").value.trim();
 
     if (!username) {
@@ -65,28 +56,15 @@ function sendOTP() {
         o.username.toLowerCase() === username.toLowerCase()
     );
 
-    if (!found) {
-        alert("This organizer is not registered!");
-        return;
-    }
-
-    // Generate demo OTP
-    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-    alert("Your OTP is: " + generatedOTP);
-
-    document.getElementById("otpBox").style.display = "block";
-}
-
-function verifyOTP() {
-    let entered = document.getElementById("otpInput").value.trim();
-    let username = document.getElementById("username").value.trim();
-
-    if (entered === generatedOTP) {
+    if (found) {
+        // Save login details
         localStorage.setItem("loggedOrganizer", username);
+
         alert("Login successful!");
-        window.location.href = "organizerdashboard.html";
+        window.location.href = "organizerdashboard.html";  // Go to dashboard
     } else {
-        alert("Incorrect OTP!");
+        alert("Organizer not found! Redirecting to registration...");
+        window.location.href = "organizerregister.html";  // Go to registration
     }
 }
 </script>
